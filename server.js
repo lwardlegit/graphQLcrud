@@ -2,6 +2,7 @@ const express = require('express')
 const expressGraphQL = require('express-graphql').graphqlHTTP
 const schema = require('./schema.js')
 const cors = require('cors')
+const port = process.env.PORT || 3000
 
 
 const app = express();
@@ -18,8 +19,8 @@ app.get('/', (req, res) => {
     res.send('Hello World!')
   })
 
-app.listen(4000 , ()=>{
- console.log('server is running on port 4000')
+app.listen(port, ()=>{
+ console.log(`server is running on port ${port}`)
 });
 
 
