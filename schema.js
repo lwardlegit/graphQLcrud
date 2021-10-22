@@ -10,15 +10,14 @@ const {
 
 
 //hardcoded data
-/*
+
 const customers =[
     {id: '1', name: 'luther wardle', email: 'lwardle@mail.com', age:35},
     {id: '2', name: 'steve smith', email: 'ssmith@mail.com', age:30},
-    {id: '3', name: 'bitchin bitch', email: 'bbitch@mail.com', age:29},
-    {id: '4', name: 'jojo mojo', email: 'jmojo@mail.com', age:14}
-    
+    {id: '3', name: 'the main mayne', email: 'itme@mail.com', age:29},
+    {id: '4', name: 'jojo mojo', email: 'jmojo@mail.com', age:14}   
 ]
-*/
+
 
 //customer type
 const CustomerType = new GraphQLObjectType({
@@ -41,23 +40,21 @@ const RootQuery = new GraphQLObjectType({
                 id: {type:GraphQLString}
             },
             resolve(parentValue,args){
-                /*
+               
                 for(let i =0; i<customers.length; i++){
                     if(customers[i].id == args.id){
-                        return customers[i]
+                        return  customers[i]
                     }
                 }
-                */
-               return axios.get('http://localhost:3000/customers/'+args.id)
-               .then(res => res.data);
+           
+              
             }
         },
 
         customers:{
             type: new GraphQLList(CustomerType),
                 resolve(parentValue,args){
-                    return axios.get('http://localhost:3000/customers')
-                    .then(res => res.data);
+                    return customers
                 }   
         }
     }
