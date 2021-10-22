@@ -11,11 +11,11 @@ const {
 
 //hardcoded data
 
-const customers =[
-    {id: '1', name: 'luther wardle', email: 'lwardle@mail.com', age:35},
-    {id: '2', name: 'steve smith', email: 'ssmith@mail.com', age:30},
-    {id: '3', name: 'the main mayne', email: 'itme@mail.com', age:29},
-    {id: '4', name: 'jojo mojo', email: 'jmojo@mail.com', age:14}   
+var customers =[
+    {id: 1, name: 'polly whirl', email: 'lwardle@mail.com', age:35},
+    {id: 2, name: 'steve smith', email: 'ssmith@mail.com', age:30},
+    {id: 3, name: 'the main mayne', email: 'itme@mail.com', age:29},
+    {id: 4, name: 'jojo mojo', email: 'jmojo@mail.com', age:14}   
 ]
 
 
@@ -23,7 +23,7 @@ const customers =[
 const CustomerType = new GraphQLObjectType({
     name: 'Customer',
     fields: () =>({
-        id: {type:GraphQLString},
+        id: {type:GraphQLInt},
         name: {type:GraphQLString},
         email: {type:GraphQLString},
         age: {type: GraphQLInt}
@@ -37,7 +37,7 @@ const RootQuery = new GraphQLObjectType({
         customer: {
             type:CustomerType,
             args:{
-                id: {type:GraphQLString}
+                id: {type:GraphQLInt}
             },
             resolve(parentValue,args){
                
@@ -54,6 +54,7 @@ const RootQuery = new GraphQLObjectType({
         customers:{
             type: new GraphQLList(CustomerType),
                 resolve(parentValue,args){
+                   
                     return customers
                 }   
         }
@@ -62,46 +63,58 @@ const RootQuery = new GraphQLObjectType({
 });
 //mutation
 const mutation = new GraphQLObjectType({
-    name: 'Mutation',
+    name: 'mutation',
     fields:{
         addCustomer:{
             type:CustomerType,
             args:{
+                id: {type: new GraphQLNonNull(GraphQLInt)},
                 name: {type: new GraphQLNonNull(GraphQLString)},
                 email: {type: new GraphQLNonNull(GraphQLString)},
                 age: {type: new GraphQLNonNull(GraphQLInt)}
                 
             },
             resolve(parentValue,args){
-                return axios.post('http://localhost:3000/customers',{
-                    name:args.name,
-                    email:args.email,
-                    age:args.age
-                })
-                .then(res => res.data)
+               // console.log(args,'making new customer')
+                // add to the list
+                console.log('args',args)
+                customers.push(args)
+              return customers
             }
         },
         deleteCustomer:{
             type:CustomerType,
             args:{
-                id:{type: new GraphQLNonNull(GraphQLString)}
+                id:{type: new GraphQLNonNull(GraphQLInt)}
             },
             resolve(parentValue,args){
-                return axios.delete('http://localhost:3000/customers/'+args.id)
-                .then(res => res.data);
-            }
-        },
+               customers = customers.filter(cust => cust.id !== args.id)
+               return customers
+        }
+    },
         editCustomer:{
             type:CustomerType,
             args:{
-                id:{type: new GraphQLNonNull(GraphQLString)},
+                id:{type: new GraphQLNonNull(GraphQLInt)},
                 name:{type: GraphQLString},
                 email:{type:GraphQLString},
-                age:{type: GraphQLString}
+                age:{type: GraphQLInt}
             },
             resolve(parentValue,args){
-                return axios.patch('http://localhost:3000/customers/'+args.id,args)
-                .then(res => res.data);
+                for(let i=0; i<customers.length; i++){
+                    if(customers[i].id == args.id){
+                        if(args.name.length > 0){
+                            customers[i].name = args.name 
+                        }
+                        if(args.email.length > 0){
+                            customers[i].email = args.email 
+                        }
+                        if(args.age.length > 0){
+                            customers[i].age = args.age 
+                        }
+                        return  customers
+                    }
+                }
             }
         }
     }

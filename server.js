@@ -7,7 +7,8 @@ const port = process.env.PORT || 3000
 
 const app = express();
 //allow CORS
-app.use(cors)
+app.use(cors())
+
 
 app.use('/graphql', expressGraphQL({
     schema:schema,
@@ -18,6 +19,7 @@ app.use('/graphql', expressGraphQL({
 app.get('/', (req, res) => {
     res.send('Hello World!')
   })
+
 
 app.listen(port, ()=>{
  console.log(`server is running on port ${port}`)
