@@ -9,17 +9,20 @@ const {
  } = require('graphql')
 
 
+
+
 //hardcoded data
 
 var customers =[
-    {id: 1, name: 'polly whirl', email: 'lwardle@mail.com', age:35},
-    {id: 2, name: 'steve smith', email: 'ssmith@mail.com', age:30},
-    {id: 3, name: 'the main mayne', email: 'itme@mail.com', age:29},
-    {id: 4, name: 'jojo mojo', email: 'jmojo@mail.com', age:14}   
+    {id: 1, name: 'polly whirl', email: 'lwardle@mail.com', password:'jn45eieoisdj', age:35},
+    {id: 2, name: 'steve smith', email: 'ssmith@mail.com', password:'jneiee43coisdj', age:30},
+    {id: 3, name: 'the main mayne', email: 'itme@mail.com', password:'jneidfdfsfeoisdj', age:29},
+    {id: 4, name: 'jojo mojo', email: 'jmojo@mail.com', password:'jneie3345soisdj', age:14}   
 ]
 
 
 //customer type
+
 const CustomerType = new GraphQLObjectType({
     name: 'Customer',
     fields: () =>({
