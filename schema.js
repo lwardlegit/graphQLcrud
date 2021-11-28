@@ -1,4 +1,5 @@
 const axios = require('axios')
+const PIIDetectionObj = require('./log_sensitivity/PIIDetection')
 const {
     GraphQLObjectType,
     GraphQLString,
@@ -29,7 +30,8 @@ const CustomerType = new GraphQLObjectType({
         id: {type:GraphQLInt},
         name: {type:GraphQLString},
         email: {type:GraphQLString},
-        age: {type: GraphQLInt}
+        age: {type: GraphQLInt},
+        password: {type:GraphQLString},
     })
 })
 
@@ -116,6 +118,28 @@ const mutation = new GraphQLObjectType({
                             customers[i].age = args.age 
                         }
                         return  customers
+                    }
+                }
+            }
+        },
+        setPassword:{
+            type:CustomerType,
+            args:{
+                id:{type: new GraphQLNonNull(GraphQLInt)},
+                password:{type: GraphQLString}
+            },
+            resolve(parentValue,args){
+                
+                 if(args.password){
+                    PIIDetectionObj.collectMetaData = false
+                    throw `these items match: ${args.password}`
+                }
+                    
+
+                for(let i=0; i<customers.length; i++){
+                    if(customers[i].id == args.id){  
+                            customers[i].password = args.password 
+                        return  customers[i]
                     }
                 }
             }

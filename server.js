@@ -3,6 +3,7 @@ const expressGraphQL = require('express-graphql').graphqlHTTP
 const schema = require('./schema.js')
 const cors = require('cors')
 const port = process.env.PORT || 3000
+const PIIDetectionObj = require('./log_sensitivity/PIIDetection')
 
 
 const app = express();
@@ -12,17 +13,10 @@ const app = express();
 app.use(cors())
 
 
-app.use('/graphql', expressGraphQL({
-    schema:schema,
-    graphiql:true,
-}));
-
-
 
 const winston = require('winston'),
   expressWinston = require('express-winston');
 
-var router = require('./my-express-router');
 
 app.use(expressWinston.logger({
   transports: [
@@ -32,18 +26,17 @@ app.use(expressWinston.logger({
     winston.format.colorize(),
     winston.format.json()
   ),
-  meta: true, // optional: control whether you want to log the meta data about the request (default to true)
+  meta: PIIDetectionObj.collectMetaData, // optional: control whether you want to log the meta data about the request (default to true)
   msg: "HTTP {{req.method}} {{req.url}}", // optional: customize the default logging message. E.g. "{{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}"
   expressFormat: true, // Use the default Express/morgan request formatting. Enabling this will override any msg if true. Will only output colors with colorize set to true
   colorize: false, // Color the text and status code, using the Express/morgan color palette (text: gray, status: default green, 3XX cyan, 4XX yellow, 5XX red).
   ignoreRoute: function (req, res) { return false; } // optional: allows to skip some log messages based on request and/or response
 }));
 
-app.use(router); // notice how the router goes after the logger.
-
-
-
-
+app.use('/graphql', expressGraphQL({
+  schema:schema,
+  graphiql:true,
+}));
 
 
 app.get('/', (req, res) => {
